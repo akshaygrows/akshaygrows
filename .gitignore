@@ -1,14 +1,2 @@
-India_Pincodes/blr.geojson
-India_Pincodes/blr_new.geojson
-India_Pincodes/delhi.geojson
-India_Pincodes/hyd.geojson
-India_Pincodes/india_all.geojson
-India_Pincodes/india_pincodes.cpg
-India_Pincodes/india_pincodes.dbf
-India_Pincodes/india_pincodes.prj
-India_Pincodes/india_pincodes.sbn
-India_Pincodes/india_pincodes.sbx
-India_Pincodes/india_pincodes.shp
-India_Pincodes/india_pincodes.shx
-India_Pincodes/india.geojson
-India_Pincodes/mum.geojson
+India_Pincodes/*
+
