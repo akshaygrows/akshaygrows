@@ -5,6 +5,9 @@ from sshtunnel import SSHTunnelForwarder
 import pandas as pd
 import psycopg2 as psy
 
+def printthis(message):
+    print(message)
+
 def get_df_from_sql(SSH_requiered, query,key_path):   #for getting a datafarame as a result
     
     db='datawarehouse'
