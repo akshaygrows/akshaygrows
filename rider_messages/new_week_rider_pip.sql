@@ -102,7 +102,6 @@ select
 from base
 
 where 1=1
--- and date_trunc('week',dispatch_date)::date = '2023-10-23'
 and shipping_city is not null
 and total_delivered >=3
 group by 
@@ -175,14 +174,14 @@ order by shipping_city, dispatch_week, rider_id
             (b.EV_cod_flag = 1 and b.avg_ev_cod_orders >= 3) )
     and b.age >= 10
     -- and b.dispatch_week + interval '1 week' = date_trunc('week',now()+interval '5.5 hours')
-    and b.dispatch_week + interval '1 week' = date_trunc('week',now()+interval '5.5 hours'+interval '1 week')
+    and b.dispatch_week + interval '1 week' = date_trunc('week',now()+interval '5.5 hours')
 
 
 )
 
 select 
     key,
-    to_char(pip_date,'YYYY-MM-DD'),
+    to_char(pip_date,'YYYY-MM-DD') as pip_date,
     rider_id,
 	shipping_city,
     rider_name,
