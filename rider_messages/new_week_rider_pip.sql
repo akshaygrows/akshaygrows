@@ -192,5 +192,6 @@ select
     starting_fasr,
     closing_fasr,
     pip_status,
-    pip_result
+    pip_result,
+    now()+interval '5.5 hours' as update_time
 from pip_data order by shipping_city, hub, starting_fasr
