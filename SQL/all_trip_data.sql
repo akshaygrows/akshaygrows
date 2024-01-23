@@ -11,7 +11,7 @@ with base as (
     ,   created_date
     from ops_main
     where shipping_partner = 'Hyperlocal'
-    -- and awb = 'GS1963799001'
+--     and awb = 'GS1511464251'
     and created_date::date >= '2023-12-01'
     and pickuptime is not null
 )
@@ -89,6 +89,7 @@ with base as (
     ,   timestamp + interval '5.5 hours' as timestamp
     ,   message
     ,   remarks
+	,	ndr_id
     ,   case when message = 'Reattempt Requested' and (deferred_date is null or deferred_date = '') then timestamp::date + interval '1 day' else to_date(deferred_date,'YYYY-MM-DD') end as deferred_date
     ,   case 	when re_attempt_slot in ('Evening','Afternoon','4PM - 10PM') then 'evening' 
 				when re_attempt_slot in ('9AM - 4PM','Morning') then 'morning'
@@ -133,7 +134,7 @@ with base as (
 		 			when re_attempt_slot = 'evening' then deferred_date + interval '18 hours'
 		 			else deferred_date + interval '12 hours' end as deferred_time
             ,   ndr.remarks
-            ,   rank() over(partition by task_id order by timestamp desc) as ndr_rank
+            ,   rank() over(partition by task_id order by ndr_id desc) as ndr_rank
             ,   re_attempt_slot
             
         from all_attempts_data as a
