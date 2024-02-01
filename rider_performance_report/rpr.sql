@@ -24,13 +24,12 @@ with pip_data as (
         tr.is_realized,
         tr.is_collected,
         l.cod_amount,
-        fa.key
+        tr.is_fake_attempt
         
     from public.locus_task_brief as l
     -- left join ops_main
     -- on locus_task_brief.awb = ops_main.awb
     left join application_db.node as n on n.locus_home_base_id = l.location_id
-    left join fake_riders as fa on fa.task_id = l.task_id
     left join application_db.trip as tr on l.task_id = tr.locus_trip_id
     where 1=1
     and l.awb is not null
@@ -53,7 +52,7 @@ select
     ,   count(case when dispatch_date=today_date and status = 'COMPLETED' and order_type = 'fresh' and mop = 'COD' then task_id else null end) as COD_fresh_delivered
     ,   count(case when dispatch_date <= today_date - interval '1 day' and status = 'CANCELLED' and is_realized = false then task_id else null end) as failed_collection_pendency
     ,   sum(case when dispatch_date <= today_date - interval '1 day' and status = 'COMPLETED' and is_collected = false then cod_amount else 0 end) as COD_collection_pendency
-    ,   count(case when key is not null then task_id else null end) as mtd_fake
+    ,   count(case when is_fake_attempt = 'true' then task_id else null end) as mtd_fake
     from base
     group by 
         shipping_city
