@@ -168,7 +168,7 @@ with base as (
                 when ideal_next_attempt_time is null then null 
              else 0 end as ot_ofd,
     case    
-                when shipment_status like '%RTO%' or shipment_status in ('Cancelled','Lost','Pickup Failed') then 'Done' 
+                when shipment_status like '%RTO%' or shipment_status in ('Cancelled','Lost','Pickup Failed','Delivered') then 'Done' 
                 when ideal_next_attempt_time is not null and next_trip_time is null then 'Pending' 
                 else 'Done' end as pendency,
     case when attempt_number = 0 then 'Fresh' else 'Reattempt' end as order_type

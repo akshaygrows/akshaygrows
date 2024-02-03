@@ -1,3 +1,6 @@
 Hub,Rider ID,Name,Load,Del%,FASR,Prepaid FASR,COD FASR,Failed Pending,COD Pending,MTD Fake,PIP Status
-ONFC-Franchise,Roshan_8287305079_030,Roshan kumar Vari FRH,10,50.0,56.0,100.0,50.0,0,0.0,,
-ONFC-Franchise,Rahul_9716815412_030,Rahul kumar,10,70.0,,,,38,0.0,35.0,
+ONFC-Franchise,Sukhvinder_9654837501_030,Sukhvinder Singh,24,4.0,0.0,0.0,0.0,0,0.0,,
+ONFC-Franchise,Sunil_9354201113_030,Sunil Singh AGS ,12,0.0,0.0,0.0,0.0,0,0.0,,
+ONFC-Franchise,Sahil_9871543433_030,Sahil Singh FRH,30,37.0,33.0,50.0,0.0,39,0.0,,
+ONFC-Franchise,Mohd_9911007669_030,Mohd Arif FRH,42,71.0,77.0,89.0,71.0,0,0.0,,
+ONFC-Franchise,Roshan_8287305079_030,Roshan kumar Vari FRH,7,71.0,83.0,100.0,67.0,0,0.0,,
