@@ -90,7 +90,11 @@ with base as (
     ,   message
     ,   remarks
 	,	ndr_id
-    ,   case when message = 'Reattempt Requested' and (deferred_date is null or deferred_date = '') then timestamp::date + interval '1 day' else to_date(deferred_date,'YYYY-MM-DD') end as deferred_date
+    ,   case    
+                when message = 'Reattempt Requested' and (deferred_date is null or deferred_date = '') then timestamp::date + interval '1 day' 
+                when extract(hour from (timestamp + interval '5.5 hours')) >= 11 and date_trunc('day',timestamp + interval '5.5 hours') = to_date(deferred_date,'YYYY-MM-DD') then to_date(deferred_date,'YYYY-MM-DD') + interval '1 day'
+                else to_date(deferred_date,'YYYY-MM-DD') end as deferred_date
+    
     ,   case 	when re_attempt_slot in ('Evening','Afternoon','4PM - 10PM') then 'evening' 
 				when re_attempt_slot in ('9AM - 4PM','Morning') then 'morning'
 				else null end as re_attempt_slot
