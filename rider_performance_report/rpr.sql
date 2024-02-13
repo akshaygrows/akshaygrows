@@ -16,7 +16,7 @@ with pip_data as (
         l.cancellation_remarks,
         l.dispatch_time,
         date_trunc('day',l.dispatch_time) as dispatch_date,
-        date_trunc('day',now()+interval '5.5 hours') - interval '1 day' as today_date,
+        date_trunc('day',now()+interval '5.5 hours') as today_date,
         -- date_trunc('day',now()+interval '5.5 hours') as today_date,
         case when RANK() OVER ( PARTITION BY l.awb ORDER BY l.dispatch_time) = 1 then 'fresh' else 'reattempt' end as order_type,
         case when l.cod_amount = 0 then 'Prepaid' else 'COD' end as mop,
