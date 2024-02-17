@@ -86,6 +86,7 @@ select
     ,   date_trunc('week',dispatch_date) as dispatch_week
     ,   rider_id
     ,   sum(total_attempted) as "Assigned"
+	,	sum(total_delivered)::double precision / nullif(count(distinct(dispatch_date)),0) as productivity
     ,   cast(sum(fresh_delivered) as float)/nullif(sum(fresh_attempted),0) as "FASR%"
     ,   cast(sum(case when slot2 = 'Morning' then fresh_delivered else null end) as float)/nullif(sum(case when slot2 = 'Morning' then fresh_attempted else null end),0) as "Morning FASR%"
     ,   cast(sum(case when slot2 = 'Evening' then fresh_delivered else null end) as float)/nullif(sum(case when slot2 = 'Evening' then fresh_attempted else null end),0) as "Evening FASR%"
@@ -129,10 +130,12 @@ order by shipping_city, dispatch_week, rider_id
                 ,   avg_mn_cod_orders
                 ,   avg_ev_pre_orders
                 ,   avg_ev_cod_orders
+				,	productivity
                 ,   case when "Morning Prepaid FASR%" < 0.85 then 1 else 0 end as MN_pre_flag
                 ,   case when "Morning COD FASR%" < 0.6 then 1 else 0 end as MN_cod_flag
                 ,   case when "Evening Prepaid FASR%" < 0.8 then 1 else 0 end as EV_pre_flag
                 ,   case when "Evening COD FASR%" < 0.5 then 1 else 0 end as EV_cod_flag
+				,	case when productivity < (case when shipping_city in ('Delhi','Bangalore') then 15 else 10 end) then 1 else 0 end as productivity_flag
                 ,   "FASR%"
         from weekly_rider_data
         left join rider_info
@@ -154,10 +157,14 @@ order by shipping_city, dispatch_week, rider_id
     ,   concat((case when b.MN_pre_flag = 0 then '' else concat('Morning Prepaid (', (b."Morning Prepaid FASR%"*100)::int::text ,'%) ') end)
 			   ,(case when b.MN_COD_flag = 0 then '' else concat('Morning COD(', (b."Morning COD FASR%"*100)::int::text ,'%) ') end)
 			   ,(case when b.EV_pre_flag = 0 then '' else concat('Morning Prepaid (', (b."Evening Prepaid FASR%"*100)::int::text ,'%) ') end)
-			   ,(case when b.EV_COD_flag = 0 then '' else concat('Morning Prepaid (', (b."Evening COD FASR%"*100)::int::text ,'%) ') end)) as need_improvement
+			   ,(case when b.EV_COD_flag = 0 then '' else concat('Morning Prepaid (', (b."Evening COD FASR%"*100)::int::text ,'%) ') end)
+			   ,(case when b.productivity_flag = 0 then '' else concat ('Productivity (', b.productivity::int::text,') ') end )
+			  ) as need_improvement
     
     ,   trunc(b.fasr*100) as starting_fasr
 	,   trunc(c.fasr*100) as closing_fasr
+	,	b.productivity as starting_productivity
+	,	c.productivity as closing_productivity
     ,   'running' as pip_status	
     ,   '' as pip_result
     from weekly_rider_data_flag as b
@@ -171,7 +178,10 @@ order by shipping_city, dispatch_week, rider_id
             or
             (b.EV_pre_flag = 1 and b.avg_ev_pre_orders >= 3)
             or
-            (b.EV_cod_flag = 1 and b.avg_ev_cod_orders >= 3) )
+            (b.EV_cod_flag = 1 and b.avg_ev_cod_orders >= 3)
+			or
+		 	(b.productivity_flag = 1)
+		)
     and b.age >= 10
     -- and b.dispatch_week + interval '1 week' = date_trunc('week',now()+interval '5.5 hours')
     and b.dispatch_week + interval '1 week' = date_trunc('week',now()+interval '5.5 hours')
@@ -193,5 +203,7 @@ select
     closing_fasr,
     pip_status,
     pip_result,
-    now()+interval '5.5 hours' as update_time
+    now()+interval '5.5 hours' as update_time,
+	starting_productivity,
+	closing_productivity
 from pip_data order by shipping_city, hub, starting_fasr
