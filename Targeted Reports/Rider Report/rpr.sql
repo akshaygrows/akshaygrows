@@ -67,8 +67,10 @@ select
     ,   hub
     ,   numbers.rider_id
     ,   rider_name
-    ,   load
-    ,   round((delivered::double precision/nullif(load,0))*100) as delivery_per
+    ,   load as assigned
+    ,   delivered
+    ,   delivered::double precision/nullif(load,0) as delivery_per
+    ,   to_char((delivered::double precision/nullif(load,0))*100, '99%') as delivery_per_string
     ,   round((fresh_delivered::double precision/nullif(fresh_attempted,0))*100) as fasr
     ,   round((prepaid_fresh_delivered::double precision/nullif(prepaid_fresh_attempted,0))*100) as prepaid_fasr
     ,   round((cod_fresh_delivered::double precision/nullif(cod_fresh_attempted,0))*100) as cod_fasr
@@ -81,4 +83,13 @@ select
     where load <> 0
 )
 
-select * from final order by shipping_city, hub, fasr 
+select 
+    rider_name
+,   hub
+,   assigned
+,   delivered
+,   delivery_per
+,   delivery_per_string
+,   case when delivery_per >= 0.8 then 1 else 0 end as delivery_flag
+from 
+final order by shipping_city, hub, fasr 
