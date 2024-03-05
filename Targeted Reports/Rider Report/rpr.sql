@@ -70,10 +70,12 @@ select
     ,   load as assigned
     ,   delivered
     ,   delivered::double precision/nullif(load,0) as delivery_per
-    ,   to_char((delivered::double precision/nullif(load,0))*100, '99%') as delivery_per_string
-    ,   round((fresh_delivered::double precision/nullif(fresh_attempted,0))*100) as fasr
-    ,   round((prepaid_fresh_delivered::double precision/nullif(prepaid_fresh_attempted,0))*100) as prepaid_fasr
-    ,   round((cod_fresh_delivered::double precision/nullif(cod_fresh_attempted,0))*100) as cod_fasr
+    ,   to_char((delivered::double precision/nullif(load,0))*100, '999%') as delivery_per_string
+    ,   (fresh_delivered::double precision/nullif(fresh_attempted,0))*100 as fasr
+    ,   prepaid_fresh_delivered::double precision/nullif(prepaid_fresh_attempted,0) as prepaid_fasr_per
+    ,   cod_fresh_delivered::double precision/nullif(cod_fresh_attempted,0) as cod_fasr_per
+    ,   to_char((prepaid_fresh_delivered::double precision/nullif(prepaid_fresh_attempted,0))*100, '999%') as prepaid_fasr_per_string
+    ,   to_char((cod_fresh_delivered::double precision/nullif(cod_fresh_attempted,0))*100, '999%') as cod_fasr_per_string
     ,   failed_collection_pendency
     ,   round(cod_collection_pendency) as cod_collection_pendency
     ,   case when mtd_fake = 0 then null else mtd_fake end as mtd_fake
@@ -91,5 +93,10 @@ select
 ,   delivery_per
 ,   delivery_per_string
 ,   case when delivery_per >= 0.8 then 1 else 0 end as delivery_flag
+,   prepaid_fasr_per
+,   cod_fasr_per
+,   prepaid_fasr_per_string
+,   cod_fasr_per_string
+,   case when prepaid_fasr_per > 0.5 and cod_fasr_per > 0.5 then 1 else 0 end as fasr_flag
 from 
-final order by shipping_city, hub, fasr 
+final order by shipping_city, hub, fasr desc
