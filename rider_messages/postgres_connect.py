@@ -14,7 +14,7 @@ def get_df_from_sql(SSH_requiered, query,key_path):   #for getting a datafarame 
     DB_HOST='datawarehouse.cdgpvetprks3.ap-south-1.rds.amazonaws.com'
     conn = []
     if SSH_requiered == 'Yes':
-        SSH_HOST='ec2-3-111-187-137.ap-south-1.compute.amazonaws.com'
+        SSH_HOST='ec2-15-206-161-154.ap-south-1.compute.amazonaws.com'
         #LOCALHOST="0.0.0.0"
         ssh_tunnel= SSHTunnelForwarder(
                 (SSH_HOST),
@@ -51,7 +51,7 @@ def get_conn(SSH_requiered,key_path):   #for getting a conn as a result
     DB_HOST='datawarehouse.cdgpvetprks3.ap-south-1.rds.amazonaws.com'
     conn = []
     if SSH_requiered == 'Yes':
-        SSH_HOST='ec2-3-111-187-137.ap-south-1.compute.amazonaws.com'
+        SSH_HOST='ec2-15-206-161-154.ap-south-1.compute.amazonaws.com'
         #LOCALHOST="0.0.0.0"
         ssh_tunnel= SSHTunnelForwarder(
                 (SSH_HOST),
