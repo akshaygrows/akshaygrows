@@ -137,7 +137,7 @@ order by shipping_city, dispatch_week, rider_id
         from weekly_rider_data
         left join rider_info
         on weekly_rider_data.rider_id = rider_info.locus_rider_id
-        where hub_type = 'blitz'
+        -- where hub_type = 'blitz'
 )
 
 ,   pip_data as (
