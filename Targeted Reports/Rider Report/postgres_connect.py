@@ -14,7 +14,7 @@ def get_df_from_sql(SSH_requiered, query,key_path):   #for getting a datafarame 
     DB_HOST='datawarehouse.cdgpvetprks3.ap-south-1.rds.amazonaws.com'
     conn = []
     if SSH_requiered == 'Yes':
-        SSH_HOST='ec2-3-111-187-137.ap-south-1.compute.amazonaws.com'
+        SSH_HOST='ec2-15-206-161-154.ap-south-1.compute.amazonaws.com'
         #LOCALHOST="0.0.0.0"
         ssh_tunnel= SSHTunnelForwarder(
                 (SSH_HOST),
@@ -51,7 +51,7 @@ def get_conn(SSH_requiered,key_path):   #for getting a conn as a result
     DB_HOST='datawarehouse.cdgpvetprks3.ap-south-1.rds.amazonaws.com'
     conn = []
     if SSH_requiered == 'Yes':
-        SSH_HOST='ec2-3-111-187-137.ap-south-1.compute.amazonaws.com'
+        SSH_HOST='ec2-15-206-161-154.ap-south-1.compute.amazonaws.com'
         #LOCALHOST="0.0.0.0"
         ssh_tunnel= SSHTunnelForwarder(
                 (SSH_HOST),
@@ -59,8 +59,9 @@ def get_conn(SSH_requiered,key_path):   #for getting a conn as a result
                 ssh_private_key= key_path,
                 ssh_private_key_password= "",
                 remote_bind_address=(DB_HOST, 5432))
-        print('Tunnel Started')
+        print('Starting Tunnel Started')
         ssh_tunnel.start()
+        print('Started, getting conn')
         conn = psy.connect(
             host=ssh_tunnel.local_bind_host,
             port=ssh_tunnel.local_bind_port,

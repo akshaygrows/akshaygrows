@@ -16,7 +16,7 @@ with pip_data as (
         l.cancellation_remarks,
         l.dispatch_time,
         date_trunc('day',l.dispatch_time) as dispatch_date,
-        date_trunc('day',now()+interval '5.5 hours') as today_date,
+        date_trunc('day',now()+interval '5.5 hours') - interval '1 day' as today_date,
         -- date_trunc('day',now()+interval '5.5 hours') as today_date,
         case when RANK() OVER ( PARTITION BY l.awb ORDER BY l.dispatch_time) = 1 then 'fresh' else 'reattempt' end as order_type,
         case when l.cod_amount = 0 then 'Prepaid' else 'COD' end as mop,
@@ -25,7 +25,8 @@ with pip_data as (
         tr.is_realized,
         tr.is_collected,
         l.cod_amount,
-        tr.is_fake_attempt
+        tr.is_fake_attempt,
+        tr.
         
     from public.locus_task_brief as l
     -- left join ops_main
@@ -97,6 +98,6 @@ select
 ,   cod_fasr_per
 ,   prepaid_fasr_per_string
 ,   cod_fasr_per_string
-,   case when prepaid_fasr_per > 0.5 and cod_fasr_per > 0.5 then 1 else 0 end as fasr_flag
+,   case when prepaid_fasr_per > 0.9 and cod_fasr_per > 0.7 then 1 else 0 end as fasr_flag
 from 
 final order by shipping_city, hub, fasr desc
