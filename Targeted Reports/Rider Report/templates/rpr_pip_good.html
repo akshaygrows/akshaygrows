@@ -91,17 +91,27 @@
       <!-- Pendency Block Start -->
     <div style="width: 181px; height: 102px; left: 11px; top: 420px; position: absolute">
       <div style="width: 181px; height: 102px; left: 0px; top: 0px; position: absolute; background: white; border-radius: 14px"></div>
+      {% if pendency_flag == 1 %}
+          <img style="width: 18px; height: 18px; left: 157px; top: 4px; position: absolute" src="assets/FILLED STAR (1).png" />
+      {% else %}
+          <img style="width: 0px; height: 0px; position: absolute" src="" />
+      {% endif %}
+      {% if pendency_flag == 0 %}
+          <img style="width: 18px; height: 18px; left: 157px; top: 4px; position: absolute" src="assets/EMPTY STAR (1).png" />
+      {% else %}
+          <img style="width: 0px; height: 0px; position: absolute" src="" />
+      {% endif %}
       <div style="width: 45px; height: 18px; left: 7px; top: 51px; position: absolute; color: black; font-size: 12px; font-family: Poppins; font-weight: 400; word-wrap: break-word">COD</div>
       <div style="width: 45px; height: 18px; left: 60px; top: 30px; position: absolute; text-align: center; color: black; font-size: 12px; font-family: Poppins; font-weight: 400; word-wrap: break-word">Past</div>
       <div style="width: 45px; height: 18px; left: 120px; top: 30px; position: absolute; text-align: center; color: black; font-size: 12px; font-family: Poppins; font-weight: 400; word-wrap: break-word">Today</div>
       <div style="width: 45px; height: 18px; left: 7px; top: 77px; position: absolute; color: black; font-size: 12px; font-family: Poppins; font-weight: 400; word-wrap: break-word">Failed</div>
-      <div style="width: 49px; height: 18px; left: 120px; top: 77px; position: absolute; text-align: center; color: black; font-size: 12px; font-family: Poppins; font-weight: 400; word-wrap: break-word">0</div>
-      <div style="width: 49px; height: 18px; left: 60px; top: 77px; position: absolute; text-align: center; color: black; font-size: 12px; font-family: Poppins; font-weight: 400; word-wrap: break-word">0</div>
-      <div style="width: 64px; height: 18px; left: 111px; top: 51px; position: absolute; text-align: center; color: black; font-size: 12px; font-family: Poppins; font-weight: 400; word-wrap: break-word">₹ 1,20,000</div>
-      <div style="width: 64px; height: 18px; left: 48px; top: 51px; position: absolute; text-align: center; color: black; font-size: 12px; font-family: Poppins; font-weight: 400; word-wrap: break-word">₹ 1,20,000</div>
+      <div style="width: 49px; height: 18px; left: 120px; top: 77px; position: absolute; text-align: center; color: black; font-size: 12px; font-family: Poppins; font-weight: 400; word-wrap: break-word">{{ today_fd_pendency }}</div>
+      <div style="width: 49px; height: 18px; left: 60px; top: 77px; position: absolute; text-align: center; color: black; font-size: 12px; font-family: Poppins; font-weight: 400; word-wrap: break-word">{{ past_fd_pendency }}</div>
+      <div style="width: 64px; height: 18px; left: 111px; top: 51px; position: absolute; text-align: center; color: black; font-size: 12px; font-family: Poppins; font-weight: 400; word-wrap: break-word">{{ today_cod_string}}</div>
+      <div style="width: 64px; height: 18px; left: 48px; top: 51px; position: absolute; text-align: center; color: black; font-size: 12px; font-family: Poppins; font-weight: 400; word-wrap: break-word">{{ past_cod_string }}</div>
       <div style="width: 77px; height: 18px; left: 52px; top: 7px; position: absolute; text-align: center; color: black; font-size: 14px; font-family: Poppins; font-weight: 400; word-wrap: break-word">Pendency</div>
       <div style="width: 48px; height: 0px; left: 111px; top: 47px; position: absolute; transform: rotate(90deg); transform-origin: 0 0; border: 1px #D2D1D1 solid"></div>
-      <div style="width: 18px; height: 18px; left: 156px; top: 7px; position: absolute">
+
       </div>
     </div>
       <!-- This is a comment -->

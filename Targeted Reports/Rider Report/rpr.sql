@@ -16,6 +16,7 @@ with pip_data as (
         l.cancellation_remarks,
         l.dispatch_time,
         date_trunc('day',l.dispatch_time) as dispatch_date,
+																						-- change below for date
         date_trunc('day',now()+interval '5.5 hours') - interval '1 day' as today_date,
         -- date_trunc('day',now()+interval '5.5 hours') as today_date,
         case when RANK() OVER ( PARTITION BY l.awb ORDER BY l.dispatch_time) = 1 then 'fresh' else 'reattempt' end as order_type,
@@ -25,8 +26,7 @@ with pip_data as (
         tr.is_realized,
         tr.is_collected,
         l.cod_amount,
-        tr.is_fake_attempt,
-        tr.
+        tr.is_fake_attempt
         
     from public.locus_task_brief as l
     -- left join ops_main
@@ -38,6 +38,28 @@ with pip_data as (
     and l.dispatch_time > now() - interval '30 days'
     and l.location_id <> 'homebase_test'
 )
+
+, cod_pendency as (
+	select 
+		rider_id
+																						--change below for dates
+	,	sum(case when delivery_date = date_trunc('day',now()+interval '5.5 hours'-interval '1 day') then amount else 0 end) as today_cod
+	,	sum(case when delivery_date < date_trunc('day',now()+interval '5.5 hours'-interval '1 day') then amount else 0 end) as past_cod
+	from cod_base_data
+	where collected = 0
+	group by 1
+)
+
+, lost_data as (
+	select 
+		rider_id
+	,	sum(shipment_value) as lost_amount
+	,	count(awb) as lost_count
+	from lost_attribution
+	where date_trunc('month',lost_date) = date_trunc('month',now()+interval '5.5 hours'-interval '1 day')
+	group by 1
+)
+
 , numbers as (
 select
         shipping_city
@@ -52,9 +74,11 @@ select
     ,   count(case when dispatch_date=today_date and status = 'COMPLETED' and order_type = 'fresh' and mop = 'Prepaid' then task_id else null end) as prepaid_fresh_delivered
     ,   count(case when dispatch_date=today_date and order_type = 'fresh' and mop = 'COD' then task_id else null end) as COD_fresh_attempted
     ,   count(case when dispatch_date=today_date and status = 'COMPLETED' and order_type = 'fresh' and mop = 'COD' then task_id else null end) as COD_fresh_delivered
-    ,   count(case when dispatch_date <= today_date - interval '1 day' and status = 'CANCELLED' and is_realized = false then task_id else null end) as failed_collection_pendency
-    ,   sum(case when dispatch_date <= today_date - interval '1 day' and status = 'COMPLETED' and is_collected = false then cod_amount else 0 end) as COD_collection_pendency
+--     ,   count(case when dispatch_date <= today_date - interval '1 day' and status = 'CANCELLED' and is_realized = false then task_id else null end) as failed_collection_pendency
+--     ,   sum(case when dispatch_date <= today_date - interval '1 day' and status = 'COMPLETED' and is_collected = false then cod_amount else 0 end) as COD_collection_pendency
     ,   count(case when is_fake_attempt = 'true' then task_id else null end) as mtd_fake
+	,	count(case when is_realized = 'false' and status = 'CANCELLED' and dispatch_date = today_date then task_id else null end) as today_fd_pendency
+	,	count(case when is_realized = 'false' and status = 'CANCELLED' and dispatch_date < today_date then task_id else null end) as past_fd_pendency
     from base
     group by 
         shipping_city
@@ -77,12 +101,21 @@ select
     ,   cod_fresh_delivered::double precision/nullif(cod_fresh_attempted,0) as cod_fasr_per
     ,   to_char((prepaid_fresh_delivered::double precision/nullif(prepaid_fresh_attempted,0))*100, '999%') as prepaid_fasr_per_string
     ,   to_char((cod_fresh_delivered::double precision/nullif(cod_fresh_attempted,0))*100, '999%') as cod_fasr_per_string
-    ,   failed_collection_pendency
-    ,   round(cod_collection_pendency) as cod_collection_pendency
-    ,   case when mtd_fake = 0 then null else mtd_fake end as mtd_fake
-    ,   pip_result
+	,	today_fd_pendency
+	,	past_fd_pendency
+	,	case when today_cod <> 0 then to_char(today_cod,'₹99,99,99,999') else '0' end as today_cod_string
+	,	case when past_cod <> 0 then to_char(past_cod,'₹99,99,99,999') else '0' end as past_cod_string
+	,	case when past_fd_pendency = 0 and past_cod = 0 then 1 else 0 end as pendency_flag
+	,	lost_amount
+	,	lost_count
+	,	case when lost_amount >= 1000 then 0 else 1 end as lost_flag
+--     ,   case when mtd_fake = 0 then null else mtd_fake end as mtd_fake
+--     ,   pip_result
+	
     from numbers
     left join pip_data as pip on pip.rider_id = numbers.rider_id    
+	left join cod_pendency as cod on cod.rider_id = numbers.rider_id
+	left join lost_data on lost_data.rider_id = numbers.rider_id
     where load <> 0
 )
 
@@ -99,5 +132,15 @@ select
 ,   prepaid_fasr_per_string
 ,   cod_fasr_per_string
 ,   case when prepaid_fasr_per > 0.9 and cod_fasr_per > 0.7 then 1 else 0 end as fasr_flag
+,	today_cod_string
+,	past_cod_string
+,	today_fd_pendency
+,	past_fd_pendency
+,	pendency_flag
+,	lost_amount
+,	lost_count
+,	lost_flag
+
+
 from 
 final order by shipping_city, hub, fasr desc
