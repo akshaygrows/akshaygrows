@@ -45,7 +45,8 @@ def get_df_from_sql(SSH_requiered, query,key_path):   #for getting a datafarame 
         conn.close()
         return df_results
         
-i    
+def get_conn(SSH_requiered,key_path):   #for getting a conn as a result
+    
     db='datawarehouse'
     DB_HOST='datawarehouse.cdgpvetprks3.ap-south-1.rds.amazonaws.com'
     conn = []
