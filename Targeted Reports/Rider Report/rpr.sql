@@ -33,6 +33,7 @@ with pip_data as (
     -- on locus_task_brief.awb = ops_main.awb
     left join application_db.node as n on n.locus_home_base_id = l.location_id
     left join application_db.trip as tr on l.task_id = tr.locus_trip_id
+    left join application_db.tracking_events as lo on lo.
     where 1=1
     and l.awb is not null
     and l.dispatch_time > now() - interval '30 days'
