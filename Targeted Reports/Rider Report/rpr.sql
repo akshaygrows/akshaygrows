@@ -17,9 +17,9 @@ with pip_data as (
         l.cancellation_remarks,
         l.dispatch_time,
         date_trunc('day',l.dispatch_time) as dispatch_date,
-																						-- change below for date
-        date_trunc('day',now()+interval '5.5 hours') - interval '1 day' as today_date,
-        -- date_trunc('day',now()+interval '5.5 hours') as today_date,
+		-- change below for date
+        -- date_trunc('day',now()+interval '5.5 hours') - interval '1 day' as today_date,
+        date_trunc('day',now()+interval '5.5 hours') as today_date,
         case when RANK() OVER ( PARTITION BY l.awb ORDER BY l.dispatch_time) = 1 then 'fresh' else 'reattempt' end as order_type,
         case when l.cod_amount = 0 then 'Prepaid' else 'COD' end as mop,
         city_name as shipping_city,
@@ -34,7 +34,6 @@ with pip_data as (
     -- on locus_task_brief.awb = ops_main.awb
     left join application_db.node as n on n.locus_home_base_id = l.location_id
     left join application_db.trip as tr on l.task_id = tr.locus_trip_id
-    -- left join application_db.tracking_events as lo on lo.
     where 1=1
     and l.awb is not null
     and date_trunc('month',l.dispatch_time) = date_trunc('month',now() + interval '5.5 hours')
@@ -72,8 +71,8 @@ with pip_data as (
 	select 
 		rider_id
 																						--change below for dates
-	,	sum(case when delivery_date = date_trunc('day',now()+interval '5.5 hours'-interval '1 day') then amount else 0 end) as today_cod
-	,	sum(case when delivery_date < date_trunc('day',now()+interval '5.5 hours'-interval '1 day') then amount else 0 end) as past_cod
+	,	sum(case when delivery_date = date_trunc('day',now()+interval '5.5 hours') then amount else 0 end) as today_cod
+	,	sum(case when delivery_date <= date_trunc('day',now()+interval '5.5 hours'-interval '1 day') then amount else 0 end) as past_cod
 	from cod_base_data
 	where collected = 0
 	group by 1
