@@ -18,8 +18,8 @@ with pip_data as (
         l.dispatch_time,
         date_trunc('day',l.dispatch_time) as dispatch_date,
 		-- change below for date
-        -- date_trunc('day',now()+interval '5.5 hours') - interval '1 day' as today_date,
-        date_trunc('day',now()+interval '5.5 hours') as today_date,
+        date_trunc('day',now()+interval '5.5 hours') - interval '1 day' as today_date,
+        -- date_trunc('day',now()+interval '5.5 hours') as today_date,
         case when RANK() OVER ( PARTITION BY l.awb ORDER BY l.dispatch_time) = 1 then 'fresh' else 'reattempt' end as order_type,
         case when l.cod_amount = 0 then 'Prepaid' else 'COD' end as mop,
         city_name as shipping_city,
@@ -62,7 +62,7 @@ with pip_data as (
         ,   ROW_NUMBER() OVER (PARTITION BY rider_id ORDER BY dispatch_time) AS rn
         from base 
         where is_fake_attempt = 'true'
-        and date_trunc('day',dispatch_time) = date_trunc('day',now()+interval '5.5 hours')
+        and date_trunc('day',dispatch_time) = today_date
         ) as fake_numbering
     WHERE rn <= 10
     GROUP BY rider_id
@@ -71,8 +71,8 @@ with pip_data as (
 	select 
 		rider_id
 																						--change below for dates
-	,	sum(case when delivery_date = date_trunc('day',now()+interval '5.5 hours') then amount else 0 end) as today_cod
-	,	sum(case when delivery_date <= date_trunc('day',now()+interval '5.5 hours'-interval '1 day') then amount else 0 end) as past_cod
+	,	sum(case when delivery_date = date_trunc('day',now()+interval '5.5 hours') - interval '1 day' then amount else 0 end) as today_cod
+	,	sum(case when delivery_date <= date_trunc('day',now()+interval '5.5 hours'-interval '2 day') then amount else 0 end) as past_cod
 	from cod_base_data
 	where collected = 0
 	group by 1
@@ -84,7 +84,7 @@ with pip_data as (
 	,	sum(shipment_value) as lost_amount
 	,	count(awb) as lost_count
 	from lost_attribution
-	where date_trunc('month',lost_date) = date_trunc('month',now()+interval '5.5 hours')
+	where date_trunc('month',lost_date) = date_trunc('month',now()+interval '5.5 hours'-interval '1 day')
 	group by 1
 )
 
@@ -92,11 +92,12 @@ with pip_data as (
     select 
         r.locus_rider_id as rider_id
     ,   sum(amount) as monthly_earning
-    ,   sum(case when trip_date = date_trunc('day',now()+interval '5.5 hours') then amount else 0 end) as today_earning
+    ,   sum(case when trip_date = date_trunc('day',now()+interval '5.5 hours'-interval '5.5 hours') then amount else 0 end) as today_earning
 
     from application_db.rider_payout as rp
     left join application_db.rider as r on r.rider_id = rp.rider_id
     where date_trunc('month',trip_date)=date_trunc('month',now()+interval '5.5 hours')
+    and date_trunc('day',trip_date)<date_trunc('day',now()+interval '5.5 hours')
     group by 1
 )
 
@@ -115,7 +116,7 @@ select
     ,   count(case when dispatch_date=today_date and order_type = 'fresh' and mop = 'COD' then task_id else null end) as COD_fresh_attempted
     ,   count(case when dispatch_date=today_date and status = 'COMPLETED' and order_type = 'fresh' and mop = 'COD' then task_id else null end) as COD_fresh_delivered
     ,   count(case when is_fake_attempt = 'true' then task_id else null end) as mtd_fake
-    ,   count(case when is_fake_attempt = 'true' and dispatch_date = date_trunc('day',now()+interval '5.5 hours') then task_id else null end) as today_fake
+    ,   count(case when is_fake_attempt = 'true' and dispatch_date = date_trunc('day',now()+interval '5.5 hours') - interval '1 day' then task_id else null end) as today_fake
 	,	count(case when is_realized = 'false' and status = 'CANCELLED' and dispatch_date = today_date then task_id else null end) as today_fd_pendency
 	,	count(case when is_realized = 'false' and status = 'CANCELLED' and dispatch_date < today_date then task_id else null end) as past_fd_pendency
     from base
