@@ -8,11 +8,10 @@ with base as (
 	,	shipping_zone
 	,   shipment_status
 	,   sort_code
-    ,   created_date
     from ops_main
     where shipping_partner = 'Hyperlocal'
---     and awb = 'GS1511464251'
-    and created_date::date >= '2023-12-01'
+    -- and awb = 'BZPPL00056780'
+    and created_date::date >= '2024-01-12'
     and pickuptime is not null
 )
 , all_attempts as (
@@ -21,7 +20,7 @@ with base as (
     ,   node_name
 	,	shipping_city
     ,   concat(awb,'-zero-attempt') as task_id
-    ,   created_date as dispatch_time
+    ,   pickuptime as dispatch_time
 	,   0 as attempt_number
 	,	case 	when warehouse_city = 'Bangalore' and shipping_city = 'Hyderabad' then 
 				(case 	when extract(hour from pickuptime) < 22 then pickuptime::date + interval '1 day' + interval '18 hours' 
@@ -58,7 +57,7 @@ with base as (
 	,	shipping_city
     ,   l.task_id
     ,   l.dispatch_time
-    ,   rank() over (partition by o.awb order by dispatch_time,task_id) as attempt_number
+    ,   rank() over (partition by o.awb order by dispatch_time) as attempt_number
     ,   case    when status = 'COMPLETED' then null 
             when lower(cancellation_remarks) like '%wrong address%' then dispatch_time::date + interval '2 day' + interval '12 hours'
 			when extract(hour from dispatch_time) <14 then dispatch_time::date + interval '1 day' + interval '12 hours'
@@ -70,8 +69,6 @@ with base as (
     from base as o 
     inner join locus_task_brief as l on o.awb = l.awb
     left join application_db.node as n on l.location_id = n.locus_home_base_id
-    where node_name <> 'GSCAN TEST'
-	and dispatch_time is not null
 )
 ,   all_attempts_data as (
     select 
@@ -89,19 +86,14 @@ with base as (
     ,   timestamp + interval '5.5 hours' as timestamp
     ,   message
     ,   remarks
-	,	ndr_id
-    ,   case    
-                when message = 'Reattempt Requested' and (deferred_date is null or deferred_date = '') then timestamp::date + interval '1 day' 
-                when extract(hour from (timestamp + interval '5.5 hours')) >= 11 and date_trunc('day',timestamp + interval '5.5 hours') = to_date(deferred_date,'YYYY-MM-DD') then to_date(deferred_date,'YYYY-MM-DD') + interval '1 day'
-                else to_date(deferred_date,'YYYY-MM-DD') end as deferred_date
-    
+    ,   case when message = 'Reattempt Requested' and (deferred_date is null or deferred_date = '') then timestamp::date + interval '1 day' else to_date(deferred_date,'YYYY-MM-DD') end as deferred_date
     ,   case 	when re_attempt_slot in ('Evening','Afternoon','4PM - 10PM') then 'evening' 
 				when re_attempt_slot in ('9AM - 4PM','Morning') then 'morning'
 				else null end as re_attempt_slot
         
     from application_db.ndr_details
     where shipper_id = 301
-    and timestamp::date >= '2023-12-01'
+    and timestamp::date >= date_trunc('week',current_date) - interval '2 weeks'
 )
 , final as (
     select
@@ -138,7 +130,7 @@ with base as (
 		 			when re_attempt_slot = 'evening' then deferred_date + interval '18 hours'
 		 			else deferred_date + interval '12 hours' end as deferred_time
             ,   ndr.remarks
-            ,   rank() over(partition by task_id order by ndr_id desc) as ndr_rank
+            ,   rank() over(partition by task_id order by timestamp desc) as ndr_rank
             ,   re_attempt_slot
             
         from all_attempts_data as a
@@ -148,40 +140,17 @@ with base as (
             and a.awb = ndr.awb) as full_data
     
     where ndr_rank = 1)
-, final2 as (
-    SELECT
-    awb,
-    node_name,
-    shipping_city,
-    sort_code,
-    task_id,
-    dispatch_time,
-    attempt_number,
-    task_status,
-    shipment_status,
-    cancellation_remarks,
-    min_reattempt_time,
-    next_trip_time,
-    deferred_time,
-    re_attempt_slot,
-    ideal_next_attempt_time,
-    CASE WHEN date_part('hour', ideal_next_attempt_time) = 12 THEN 'Morning' ELSE 'Evening' END AS ideal_next_attempt_slot,
-    final.ideal_next_attempt_time::date AS ideal_next_attempt_date,
-    case    when shipment_status = 'Cancelled' then null
+select * 
+    ,   case    when shipment_status = 'Cancelled' then null
                 when next_trip_time <= ideal_next_attempt_time then 1 
                 when ideal_next_attempt_time is null then null 
-             else 0 end as ot_ofd,
-    case    when shipment_status = 'Cancelled' then null
-                when next_trip_time::date <= ideal_next_attempt_time::date then 1 
-                when ideal_next_attempt_time is null then null 
-             else 0 end as ofd,
-    case    
-                when shipment_status like '%RTO%' or shipment_status in ('Cancelled','Lost','Pickup Failed','Delivered') then 'Done' 
+             else 0 end as ot_ofd
+    ,   case    
+                when shipment_status like '%RTO%' or shipment_status in ('Cancelled','Lost') then 'Done' 
                 when ideal_next_attempt_time is not null and next_trip_time is null then 'Pending' 
-                else 'Done' end as pendency,
-    case when attempt_number = 0 then 'Fresh' else 'Reattempt' end as order_type
-    
-    from final
-)
-select * from final2
-order by shipping_city, ideal_next_attempt_date, ideal_next_attempt_slot, attempt_number
+                else 'Done' end as pendency
+    ,   case when attempt_number = 0 then 'Fresh' else 'Reattempt' end as order_type
+from final 
+where 1=1
+-- and awb = 'BZPPL00056780'
+order by awb, attempt_number
