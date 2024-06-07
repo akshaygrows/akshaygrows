@@ -1,3 +1,6 @@
 India_Pincodes/*
 Targeted Reports/Rider Report/image_files/*
 __pycache*
+*.cer
+.DS_Store
+*.pem
