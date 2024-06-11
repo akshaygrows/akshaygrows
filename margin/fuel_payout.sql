@@ -1,7 +1,7 @@
 with base as(
     select      d.node_name
         ,       b.tour_date
-        ,       c.locus_rider_id
+        ,       c.rider_id
         ,       c.rider_name
         ,       c.fuel_payout_automation
         -- ,       coalesce(a.fuel_rate,0) as fuel_rate
@@ -49,7 +49,7 @@ with base as(
     
     from            base
     left join       cod_data
-    on              base.locus_rider_id = cod_data.rider_id
+    on              base.rider_id = cod_data.rider_id
     WHERE
         base.fuel_payout_automation = 'true'
 )
@@ -66,7 +66,7 @@ xx as
 (
 select          node_name
 ,               tour_date
-,               locus_rider_id
+,               rider_id
 ,               fuel_payout_automation
 ,               rider_name
 -- ,               fuel_rate
@@ -85,10 +85,10 @@ order by        1,2,3,4
 -----Removing riders which have aggregated delivery percent less than 40%------ 
 yy as
 (
-select locus_rider_id, sum(assigned_orders) as assigned_orders, sum(delivered_orders) as delivered_orders, 
+select rider_id, sum(assigned_orders) as assigned_orders, sum(delivered_orders) as delivered_orders, 
 case when sum(assigned_orders) !=0 then (sum(delivered_orders)*1.0/sum(assigned_orders)) else 0 end as del_percent
 from xx 
-group by locus_rider_id
+group by rider_id
 ), 
 
 rider_with_default as 
@@ -100,5 +100,5 @@ where del_percent < 0.4
 select *
 from xx 
 left join application_db.node as n on xx.node_name = n.node_name
-where locus_rider_id not in (select locus_rider_id from rider_with_default)
+where rider_id not in (select rider_id from rider_with_default)
 and node_type <> 'franchise_hub'

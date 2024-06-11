@@ -9,6 +9,7 @@ with pincode_rates_new as (
 		a.rider_name
 	,   node_name
 	,	locus_rider_id
+	,	a.rider_id as num_rider_id
 	,   b.city_name as city_name
     ,   case when d.payout_structure is null then a.payout_structure else d.payout_structure end as payout_structure
     ,   case when d.vendor_name is null then c.vendor_name else d.vendor_name end as vendor_name
@@ -33,6 +34,7 @@ with pincode_rates_new as (
     ,                           rider_info.city_name as city
 	,							rider_info.node_name as hub
 	,							warehouse_city
+	,                           rider_info.num_rider_id
     ,                           RANK() OVER ( PARTITION BY locus_task_brief.awb ORDER BY locus_task_brief.dispatch_time) as attempt_number
     ,                           case when locus_task_brief.cod_amount = 0 then 'Prepaid' else 'COD' end as mop
     ,                           shipment_order_details.user_id as user_id_id
@@ -81,7 +83,7 @@ with pincode_rates_new as (
 , base as (
     SELECT                      
             date_trunc('day',dispatch_time) as dispatch_date
-    ,       city, hub, awb , rider_id, rider_name, status, task_id, payout_structure, vendor_name, warehouse_city
+    ,       city, hub, awb , rider_id, num_rider_id, rider_name, status, task_id, payout_structure, vendor_name, warehouse_city
     ,       chargeable_weight, delivered_rate, locus_task_query.pincode, pincode_rates_new.pincode , slot
 	,		case 	when status = 'COMPLETED' and payout_structure = 'ORDER'  then 0 else 0 end as org_id_pay
     ,       case    when status = 'COMPLETED' and payout_structure = 'ORDER' then 
@@ -199,9 +201,11 @@ group by    1,2,3,4,5
     ,							rider_info.rider_name
 	,                           rider_info.city_name as city
 	,							warehouse_city
+	,                           rider_info.num_rider_id
 	,							rider_info.node_name as hub
     ,                           RANK() OVER ( PARTITION BY locus_task_brief.awb ORDER BY dispatch_time) as attempt_number
     ,                           case when locus_task_brief.cod_amount = 0 then 'Prepaid' else 'COD' end as mop
+	,                           case when extract(hour from locus_task_brief.dispatch_time) >= 15 then 'evening' else 'morning' end as slot
     ,                           shipment_order_details.user_id as user_id_id
     ,                           greatest(shipment_order_details.shipment_chargeable_weight, greatest(( dwh_volume/5000.0), dwh_weight)) as chargeable_weight
     ,                           shipment_order_details.shipping_pincode as pincode
@@ -222,7 +226,7 @@ group by    1,2,3,4,5
 , base_franchise as (
     SELECT                      
             date_trunc('day',dispatch_time) as dispatch_date
-    ,       city, hub, awb , rider_id, rider_name, status, task_id, warehouse_city
+    ,       city, hub, awb , rider_id, num_rider_id, rider_name, status, task_id, warehouse_city, slot
     ,       chargeable_weight, locus_task_query_franchise.pincode, payout_structure
 	,		case 	
 					when status='COMPLETED' and city = 'Bangalore' then (
@@ -259,10 +263,12 @@ group by    1,2,3,4,5
 		select awb
 	,	task_id
 	,	b.dispatch_date
+	,	b.slot
 	,	b.city
 	,	b.warehouse_city
 	,	b.hub
 	,	b.rider_id	
+	,   b.num_rider_id
 	,	b.delivery_incentive+b.weight_incentive as 	awb_pay
 	,	status
 	,	b.payout_structure
@@ -275,10 +281,12 @@ group by    1,2,3,4,5
         awb
     ,   task_id
     ,   base.dispatch_date
+	,   base.slot
     ,   base.city
 	,   base.warehouse_city
     ,   base.hub
     ,   base.rider_id
+	,	base.num_rider_id
     ,   base.org_id_pay+base.delivery_incentive+base.weight_incentive+base.failed_delivery_incentive+base.evening_order_incentive+base.fuel_amount+coalesce((mg_payed/nullif(delivered,0)),0)+ coalesce((fixed_pay/nullif(delivered,0)),0) as awb_pay
     ,   status
     ,   base.payout_structure
