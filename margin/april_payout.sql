@@ -43,7 +43,7 @@ with pincode_rates_new as (
     ,                           case when extract(hour from locus_task_brief.dispatch_time) >= 15 then 'evening' else 'morning' end as slot
 	,							rider_info.payout_structure
 	,							rider_info.vendor_name
-	,							(case when  r.fuel_payout_automation = 'true' then tf.fuel_payout else 0 end)/nullif(completed_tasks,0) as fuel_amount
+	,							coalesce((case when  r.fuel_payout_automation = 'true' then tf.fuel_payout else 0 end)/nullif(completed_tasks,0),0) as fuel_amount
     from                        locus_task_brief
     left join                   shipment_order_details
     ON                          locus_task_brief.awb = shipment_order_details.awb
@@ -287,6 +287,14 @@ group by    1,2,3,4,5
     ,   base.hub
     ,   base.rider_id
 	,	base.num_rider_id
+-- 	,	base.org_id_pay
+-- 	,	base.delivery_incentive
+-- 	,	base.weight_incentive
+-- 	,	base.failed_delivery_incentive
+-- 	,	base.evening_order_incentive
+-- 	,	base.fuel_amount
+-- 	,	coalesce((mg_payed/nullif(delivered,0)),0) as mg_amount
+-- 	,	coalesce((fixed_pay/nullif(delivered,0)),0) as fixed_amount
     ,   base.org_id_pay+base.delivery_incentive+base.weight_incentive+base.failed_delivery_incentive+base.evening_order_incentive+base.fuel_amount+coalesce((mg_payed/nullif(delivered,0)),0)+ coalesce((fixed_pay/nullif(delivered,0)),0) as awb_pay
     ,   status
     ,   base.payout_structure
@@ -364,9 +372,11 @@ SELECT                          *
 -- from                            day_view
 -- from							month_view
 from            final_awb_view
+-- from 						awb_view
 where                           1=1
 -- and         rider_id = 'M_9606961772_07'
 -- and         dispatch_date = '2024-02-15'
 -- and         city = 'Delhi'
--- and awb = 'GS1945828791'
+-- and awb = 'GS1320532874'
+-- and awb_pay = 0
 order by city desc
