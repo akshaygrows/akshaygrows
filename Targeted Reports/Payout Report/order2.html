@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        #capture-area {
+            /* Adjust these dimensions to fit your content */
+            width: 390px;
+            height: 610px;
+            margin: 0 auto;
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="capture-area">
+        <div class="PayoutReportOrder" style="width: 390px; height: 610px; position: relative; background: #F8F8F8">
+            <div class="SubHeading" style="width: 390px; height: 85px; left: 0px; top: 89px; position: absolute">
+              <div class="WhiteBackground" style="width: 390px; height: 85px; left: 0px; top: 0px; position: absolute; background: white"></div>
+              <div class="AkshayAgarwal" style="width: 294px; height: 33px; left: 10px; top: 12px; position: absolute; color: black; font-size: 24px; font-family: Poppins; font-weight: 500; word-wrap: break-word">Akshay Agarwal</div>
+              <div class="OrderPayout" style="width: 110px; height: 20px; left: 10px; top: 48px; position: absolute; color: black; font-size: 14px; font-family: Poppins; font-weight: 400; word-wrap: break-word">ORDER PAYOUT</div>
+              <div class="022024" style="width: 83px; height: 17px; left: 293px; top: 21px; position: absolute; color: black; font-size: 14px; font-family: Poppins; font-weight: 400; word-wrap: break-word">{{today_date}}</div>
+            </div>
+            <div class="Header" style="width: 390px; height: 232.73px; left: 0px; top: 0px; position: absolute">
+              <div class="BlueBackground" style="width: 390px; height: 89px; left: 0px; top: 0px; position: absolute; background: #0066FF"></div>
+              <div class="MaskGroup" style="width: 375px; height: 232.73px; left: 14px; top: 0px; position: absolute">
+                <!-- <div class="Rectangle2" style="width: 375px; height: 232.73px; left: 0px; top: 0px; position: absolute; background: #0066FF"></div> -->
+                <div class="Group117" style="width: 157.45px; height: 453.83px; left: 368.19px; top: -206.26px; position: absolute; transform: rotate(0.89deg); transform-origin: 0 0; opacity: 0.20">
+                  <div class="Rectangle6" style="width: 39.17px; height: 316.61px; left: -72.49px; top: 116.51px; position: absolute; transform: rotate(31.89deg); transform-origin: 0 0; background: linear-gradient(180deg, white 0%, rgba(255, 255, 255, 0) 100%)"></div>
+                  <div class="Rectangle7" style="width: 39.17px; height: 316.61px; left: 13.97px; top: 89.50px; position: absolute; transform: rotate(31.89deg); transform-origin: 0 0; background: linear-gradient(180deg, white 0%, rgba(255, 255, 255, 0) 100%)"></div>
+                  <div class="Rectangle8" style="width: 39.17px; height: 316.61px; left: 100.43px; top: 62.48px; position: absolute; transform: rotate(31.89deg); transform-origin: 0 0; background: linear-gradient(180deg, white 0%, rgba(255, 255, 255, 0) 100%)"></div>
+                </div>
+              </div>
+              <div class="RiderPayoutReport" style="width: 298px; height: 32px; left: 54px; top: 46px; position: absolute; text-align: center; color: white; font-size: 22px; font-family: Poppins; font-weight: 700; word-wrap: break-word">Rider Payout Report</div>
+              <img class="BlitzLogo" style="width: 78px; height: 29px; left: 152px; top: 11px; position: absolute" src="assets/blitz_white.png" />
+            </div>
+            <div class="MonthPay" style="width: 370px; height: 57px; left: 10px; top: 188px; position: absolute">
+              <div class="WhiteBackground" style="width: 370px; height: 57px; left: 0px; top: 0px; position: absolute; background: white"></div>
+              <div class="TodaySPayMonthSPay" style="width: 96px; height: 42px; left: 5px; top: 6px; position: absolute; color: black; font-size: 14px; font-family: Poppins; font-weight: 600; word-wrap: break-word">Today’s Pay:<br/>Month’s Pay:</div>
+              <div class="Rs1800Rs18000" style="width: 96px; height: 42px; left: 110px; top: 6px; position: absolute; color: black; font-size: 14px; font-family: Poppins; font-weight: 600; word-wrap: break-word">Rs. {{today_pay}}<br/>Rs. {{month_pay}}</div>
+            </div>
+            <div class="PayoutCalculation" style="width: 370px; height: 373.65px; left: 10px; top: 259px; position: absolute">
+              <div class="WhiteBackground" style="width: 370px; height: 341px; left: 0px; top: 0px; position: absolute; background: white"></div>
+              <div class="PayoutCalculation" style="width: 142px; height: 26px; left: 114px; top: 7px; position: absolute; color: black; font-size: 14px; font-family: Poppins; font-weight: 700; word-wrap: break-word">Payout Calculation</div>
+              <div class="Calc" style="width: 254px; height: 298.68px; left: 5.05px; top: 32.65px; position: absolute"><span style="color: black; font-size: 14px; font-family: Poppins; font-weight: 600; word-wrap: break-word">Delivered :</span><span style="color: black; font-size: 14px; font-family: Poppins; font-weight: 400; word-wrap: break-word"> 36<br/></span><span style="color: black; font-size: 14px; font-family: Poppins; font-weight: 600; word-wrap: break-word">Base Pay : <br/></span><span style="color: black; font-size: 14px; font-family: Poppins; font-weight: 400; word-wrap: break-word">Less than 3kg : 25 x Rs 20<br/>3Kg - 5KG : 7 x Rs 50<br/>More than 5kg : 4 x Rs 80<br/></span><span style="color: black; font-size: 14px; font-family: Poppins; font-weight: 600; word-wrap: break-word">Pin Code Pay :<br/>Slot Incentive :<br/></span><span style="color: black; font-size: 14px; font-family: Poppins; font-weight: 400; word-wrap: break-word">Evening : 6 x Rs 5<br/></span><span style="color: black; font-size: 14px; font-family: Poppins; font-weight: 600; word-wrap: break-word">Performance Incentive :<br/></span><span style="color: black; font-size: 14px; font-family: Poppins; font-weight: 400; word-wrap: break-word">FASR <= 90% : 36 x Rs 1<br/></span><span style="color: black; font-size: 14px; font-family: Poppins; font-weight: 600; word-wrap: break-word">MG :<br/></span><span style="color: black; font-size: 14px; font-family: Poppins; font-weight: 400; word-wrap: break-word">Not Applicable (Delivered < 10)<br/><br/></span><span style="color: black; font-size: 14px; font-family: Poppins; font-weight: 600; word-wrap: break-word">Total : </span></div>
+              <div class="Amount" style="width: 91px; height: 341px; left: 271px; top: 32.65px; position: absolute; color: black; font-size: 14px; font-family: Poppins; font-weight: 400; word-wrap: break-word"><br/><br/>Rs 500<br/>Rs 350<br/>Rs 320<br/>Rs 180<br/><br/>Rs 30<br/><br/>Rs 36<br/><br/>Rs 0<br/><br/>Rs 1416</div>
+            </div>
+          </div>
+    </div>
+</body>
+</html>
