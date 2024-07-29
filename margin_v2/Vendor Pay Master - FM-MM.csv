@@ -1,0 +1,57 @@
+Month,Warehouse City,Shipping City,Vendor Name,Cost,Orders (computable),Lane Type
+01/01/2024,Bangalore,Bangalore,,"₹11,18,555",,Hyperlocal
+01/01/2024,Delhi,Bangalore,,"₹2,05,699",,Intercity
+01/01/2024,Delhi,Delhi,,"₹12,91,611",,Hyperlocal
+01/01/2024,Bangalore,Hyderabad,Rippler,"₹2,94,664",,Intercity
+01/01/2024,Bangalore,Hyderabad,General Travels,"₹1,03,040",,Intercity
+01/01/2024,Hyderabad,Hyderabad,Ramex Courier,"₹2,13,600",,Hyperlocal
+01/01/2024,Delhi,Jaipur,,"₹62,961",,Intercity
+01/01/2024,Mumbai,Mumbai,,"₹5,26,000",,Hyperlocal
+01/02/2024,Delhi,Bangalore,Rippler,"₹4,48,036",,Intercity
+01/02/2024,Bangalore,Bangalore,,"₹13,41,454",,Hyperlocal
+01/02/2024,Delhi,Delhi,,"₹14,51,683",,Hyperlocal
+01/02/2024,Bangalore,Hyderabad,Rippler,"₹3,51,240",,Intercity
+01/02/2024,Delhi,Hyderabad,Rippler,"₹98,053",,Intercity
+01/02/2024,Bangalore,Hyderabad,General Travels,"₹99,840",,Intercity
+01/02/2024,Hyderabad,Hyderabad,,"₹2,41,004",,Hyperlocal
+01/02/2024,Delhi,Jaipur,,"₹1,52,712",,Intercity
+01/02/2024,Delhi,Mumbai,Rippler,"₹1,13,646",,Intercity
+01/02/2024,Mumbai,Mumbai,,"₹5,26,000",,Hyperlocal
+01/03/2024,Delhi,Bangalore,Rippler,"₹6,26,997",,Intercity
+01/03/2024,Bangalore,Bangalore,,"₹16,57,356",,Hyperlocal
+01/03/2024,Delhi,Delhi,,"₹14,12,767",,Hyperlocal
+01/03/2024,Delhi,Hyderabad,Rippler,"₹3,34,523",,Intercity
+01/03/2024,Bangalore,Hyderabad,Rippler,"₹6,65,012",,Intercity
+01/03/2024,Hyderabad,Hyderabad,,"₹3,60,152",,Hyperlocal
+01/03/2024,Delhi,Jaipur,,"₹1,53,617",,Intercity
+01/03/2024,Delhi,Mumbai,Rippler,"₹4,12,674",,Intercity
+01/03/2024,Mumbai,Mumbai,,"₹4,91,500",,Hyperlocal
+01/04/2024,Bangalore,Bangalore,Yellappa,"₹17,85,760",,Hyperlocal
+01/04/2024,Delhi,Bangalore,Rippler,"₹5,16,988",,Intercity
+01/04/2024,Delhi,Delhi,,"₹17,51,510",,Hyperlocal
+01/04/2024,Bangalore,Hyderabad,Rippler,"₹7,12,478",,Intercity
+01/04/2024,Delhi,Hyderabad,Rippler,"₹2,96,703",,Intercity
+01/04/2024,Hyderabad,Hyderabad,,"₹2,63,023",,Hyperlocal
+01/04/2024,Delhi,Jaipur,,"₹1,54,562",,Intercity
+01/04/2024,Mumbai,Mumbai,Ambika,"₹5,38,500",,Hyperlocal
+01/04/2024,Delhi,Mumbai,Rippler,"₹3,95,575",,Intercity
+01/05/2024,Delhi,Bangalore,Rippler,"₹5,42,837",,Intercity
+01/05/2024,Bangalore,Bangalore,,"₹18,69,930",,Hyperlocal
+01/05/2024,Delhi,Delhi,,"₹18,68,216",,Hyperlocal
+01/05/2024,Delhi,Hyderabad,Rippler,"₹2,96,703",,Intercity
+01/05/2024,Bangalore,Hyderabad,,"₹7,12,478",,Intercity
+01/05/2024,Hyderabad,Hyderabad,,"₹2,88,582",,Hyperlocal
+01/05/2024,Delhi,Jaipur,,"₹1,54,807",,Intercity
+01/05/2024,Delhi,Mumbai,Rippler,"₹5,38,500",,Intercity
+01/05/2024,Mumbai,Mumbai,,"₹4,15,354",,Hyperlocal
+01/06/2024,Delhi,Bangalore,Rippler,"₹5,97,121",,Intercity
+01/06/2024,Bangalore,Bangalore,,"₹19,26,620",,Hyperlocal
+01/06/2024,Delhi,Delhi,,"₹20,30,342",,Hyperlocal
+01/06/2024,Delhi,Hyderabad,Rippler,"₹3,11,538",,Intercity
+01/06/2024,Bangalore,Hyderabad,,"₹7,48,102",,Intercity
+01/06/2024,Hyderabad,Hyderabad,,"₹5,21,052",,Hyperlocal
+01/06/2024,Delhi,Jaipur,,"₹1,55,557",,Intercity
+01/06/2024,Delhi,Mumbai,Rippler,"₹5,65,425",,Intercity
+01/06/2024,Mumbai,Mumbai,,"₹4,56,889",,Hyperlocal
+01/06/2024,Mumbai,Pune,,"₹1,80,000",,Intercity
+01/06/2024,Pune,Pune,,"₹58,000",,Hyperlocal
